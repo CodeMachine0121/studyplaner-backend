@@ -1,12 +1,13 @@
 from typing import List, Dict, Any
 import json
+from models.study_models import StudySubject
 
 class PromptService:
     """
     Service for generating prompts for AI models
     """
     
-    def get_study_plan_prompt(self, subject: str) -> List[Dict[str, str]]:
+    def get_study_plan_prompt(self, study_subject: StudySubject) -> List[Dict[str, str]]:
         """
         Generate a prompt for creating a 30-day study plan for a given subject
         
@@ -44,7 +45,7 @@ class PromptService:
             
             {"role": "system", "content": f"你必須嚴格按照以下JSON格式輸出30天的學習計劃，每天必須包含Day(天數)、Title(當天學習的簡短標題)和Content(詳細的學習內容)三個欄位。請不要添加任何其他文字或解釋：\n{example_json_str}"}, 
 
-            {"role": "user", "content": f"請為我安排一個30天的'{subject}'學習計劃。每天的計劃必須包含Day(天數)、Title(當天學習的簡短標題)和Content(詳細的學習內容)，文字長度大約1000字數即可(不含題目及實作）。請確保學習計劃循序漸進，由基礎到進階，並包含複習和練習的時間。"},
+            {"role": "user", "content": f"請為我安排一個30天的'{study_subject.Subject}'學習計劃，請學習計劃的內容專注於'{study_subject.Description}'。每天的計劃必須包含Day(天數)、Title(當天學習的簡短標題)和Content(詳細的學習內容)，文字長度大約1000字數即可(不含題目及實作）。請確保學習計劃循序漸進，由基礎到進階，並包含複習和練習的時間。"},
 
             {"role": "user", "content": f"Content 為當天學習的詳細內容，請提供詳細的學習說明，並提供相關的練習題目，包括答案"}
         ]

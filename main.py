@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
 from ai_service import AIService
+from models.study_models import StudySubject
 
 # Load environment variables
 load_dotenv()
@@ -17,18 +17,17 @@ ai_service = AIService(
     model=os.getenv("MODEL_NAME", "grok-2-latest")
 )
 
-class StudySubject(BaseModel):
-    Content: str
+# StudySubject model is now imported from models.study_models
 
 @app.post("/process-study")
-async def process_study(subject: StudySubject):
-    if not subject.Content:
-        raise HTTPException(status_code=400, detail="Content cannot be empty")
+async def process_study(study_subject: StudySubject):
+    if not study_subject.Subject:
+        raise HTTPException(status_code=400, detail="Subject cannot be empty")
     
     try:
         # Process study content using AI service with named parameters
         processed_content = ai_service.process_study_content(
-            content=subject.Content,
+            study_subject=study_subject,
             max_tokens=15000
         )
         return {"processed_content": processed_content}
