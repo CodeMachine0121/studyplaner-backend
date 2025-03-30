@@ -1,6 +1,6 @@
 from openai import OpenAI
 from prompt_service import PromptService
-from models.study_models import DailyPlan, StudyPlan, StudySubject
+from models.study_models import StudyPlan, StudySubject
 
 class AIService:
     """Service for interacting with AI models"""
