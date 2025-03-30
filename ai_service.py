@@ -1,5 +1,15 @@
 from openai import OpenAI
-import os
+from pydantic import BaseModel
+from typing import List
+from prompt_service import PromptService
+
+class DailyPlan(BaseModel):
+    Day: int
+    Title: str
+    Content: str
+    
+class StudyPlan(BaseModel):
+    DailyPlans: List[DailyPlan]
 
 class AIService:
     """Service for interacting with AI models"""
@@ -10,8 +20,9 @@ class AIService:
         self.base_url = base_url
         self.model = model
         self.client = OpenAI(api_key=self.openai_api_key, base_url= self.base_url)
+        self.promptService = PromptService()
     
-    def process_study_content(self, content, max_tokens=1000):
+    def process_study_content(self, content, max_tokens=1000) -> StudyPlan:
         """
         Process study content using OpenAI's GPT model
         
@@ -26,10 +37,7 @@ class AIService:
             raise ValueError("Content cannot be empty")
         
         # Chat template for processing study content
-        messages = [
-            {"role": "system", "content": "You are a helpful study assistant that helps organize and enhance learning materials."},
-            {"role": "user", "content": f"Please help me understand and organize the following study content:\n\n{content}"}
-        ]
+        messages = self.promptService.get_study_plan_prompt(content)
 
         # Send request to OpenAI
         response = self.client.chat.completions.create(
@@ -38,6 +46,10 @@ class AIService:
             temperature=0.7,
             max_tokens=max_tokens
         )
+
+        message = response.choices[0].message.content
+        study_plan = StudyPlan.parse_raw(message)
+
+        return study_plan
         
-        return response.choices[0].message.content
         

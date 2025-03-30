@@ -29,7 +29,7 @@ async def process_study(subject: StudySubject):
         # Process study content using AI service with named parameters
         processed_content = ai_service.process_study_content(
             content=subject.Content,
-            max_tokens=1000
+            max_tokens=15000
         )
         return {"processed_content": processed_content}
     
